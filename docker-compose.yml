@@ -15,14 +15,14 @@ services:
     #   - 8082:80
     volumes:
       - ./service-2/:/usr/share/nginx/html:ro
-  # proxy:
-  #   container_name: "reverse-proxy"
-  #   image: nginx
-  #   ports:
-  #     - 8080:80
-  #   volumes:
-  #     - ~/Sandbox/nginx-docker/static/:/usr/share/nginx/html:ro
-  #     - ~/Sandbox/nginx-docker/conf.d:/etc/nginx/conf.d:ro
+  proxy:
+    container_name: "reverse-proxy"
+    image: nginx
+    ports:
+      - 8080:80
+    volumes:
+      - ./static/:/usr/share/nginx/html:ro
+      - ./conf.d:/etc/nginx/conf.d:ro
   my-server:
     container_name: "my-server"
     build: ./server
