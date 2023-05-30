@@ -2,17 +2,17 @@ version: '3'
 
 services:
   service1:
-    container_name: "jibber-jabber-service-1"
+    container_name: "service-1"
     image: nginx
     volumes:
       - ~/Sandbox/nginx-docker/service-1/:/usr/share/nginx/html:ro
   service2:
-    container_name: "jibber-jabber-service-2"
+    container_name: "service-2"
     image: nginx
     volumes:
       - ~/Sandbox/nginx-docker/service-2/:/usr/share/nginx/html:ro
   proxy:
-    container_name: "jibber-jabber-reverse-proxy"
+    container_name: "reverse-proxy"
     image: nginx
     ports:
       - 8080:80
