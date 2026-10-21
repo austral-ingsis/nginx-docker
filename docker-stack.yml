@@ -1,0 +1,84 @@
+version: '3.8'
+
+services:
+  service1:
+    image: nginx:stable-alpine
+    networks: [backend]
+    configs:
+      - source: service1_page
+        target: /usr/share/nginx/html/index.html
+
+  service2:
+    image: nginx:stable-alpine
+    networks: [backend]
+    configs:
+      - source: service2_page
+        target: /usr/share/nginx/html/index.html
+
+  proxy:
+    image: nginx:stable-alpine
+    networks: [backend]
+    ports:
+      - target: 80
+        published: 8081
+        protocol: tcp
+        mode: ingress
+    configs:
+      - source: proxy_conf
+        target: /etc/nginx/conf.d/default.conf
+      - source: home_page
+        target: /usr/share/nginx/html/index.html
+      - source: static_service1_page
+        target: /usr/share/nginx/html/service-1/index.html
+      - source: static_service12_page
+        target: /usr/share/nginx/html/service-12/index.html
+      - source: error404_page
+        target: /usr/share/nginx/html/errors/my_custom_404.html
+      - source: error500_page
+        target: /usr/share/nginx/html/errors/my_custom_500.html
+
+  my-server:
+    image: nginx:stable-alpine
+    networks: [backend]
+    ports:
+      - target: 80
+        published: 8083
+        protocol: tcp
+        mode: ingress
+    configs:
+      - source: server_page
+        target: /usr/share/nginx/html/index.html
+
+networks:
+  backend:
+    driver: overlay
+
+# When a file changes, bump its config name suffix (v1 -> v2).
+configs:
+  proxy_conf:
+    name: "reverse-proxy_proxy_conf_v1"
+    file: ./conf.d/server.conf
+  home_page:
+    name: "reverse-proxy_home_page_v2"
+    file: ./static/index.html
+  service1_page:
+    name: "reverse-proxy_service1_page_v1"
+    file: ./service-1/index.html
+  service2_page:
+    name: "reverse-proxy_service2_page_v1"
+    file: ./service-2/index.html
+  static_service1_page:
+    name: "reverse-proxy_static_service1_page_v1"
+    file: ./static/service-1/index.html
+  static_service12_page:
+    name: "reverse-proxy_static_service12_page_v1"
+    file: ./static/service-12/index.html
+  error404_page:
+    name: "reverse-proxy_error404_page_v1"
+    file: ./static/errors/my_custom_404.html
+  error500_page:
+    name: "reverse-proxy_error500_page_v1"
+    file: ./static/errors/my_custom_500.html
+  server_page:
+    name: "reverse-proxy_server_page_v1"
+    file: ./server/index.html
